@@ -18,6 +18,7 @@ app.use(cors({
     origin: "http://localhost:3000",
     methods: "GET,POST,PUT,DELETE",
     allowedHeaders: "Content-Type,Authorization",
+    credentials: true,
 }));
 app.use(bodyParser.json());
 
@@ -44,7 +45,14 @@ app.post("/login", async (req, res) => {
             expiresIn: "1h",
         });
 
-        res.json({ token, user: { id: user._id, username: user.username, role: user.role } });
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'strict',
+            maxAge: 4*60*60*1000,
+        })
+
+        res.json({ message:"Login Successfull", user: { id: user._id, username: user.username, role: user.role } });
     } catch (error) {
         console.error("Error during login:", error);
         res.status(500).json({ message: "Internal Server Error" });

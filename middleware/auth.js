@@ -7,7 +7,7 @@ const authenticate = (req, res, next) => {
         return res.status(401).json({ message: "Authorization header missing or malformed" });
     }
 
-    const token = authHeader.split(" ")[1];
+    const token = req.cookies.token;
     console.log("Extracted Token:", token); // Extract token from "Bearer <token>"
 
     try {
